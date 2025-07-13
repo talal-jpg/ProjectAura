@@ -42,8 +42,6 @@ class AURA_API AAuraPlayerController : public APlayerController
 
 	void Move(const FInputActionValue& InputActionValue);
 
-	void MoveToLocation(const FVector& Location);
-
 	void CursorTrace();
 
 	IAuraEnemyCursorHitInterface* ThisActor;

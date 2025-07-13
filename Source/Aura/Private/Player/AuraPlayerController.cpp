@@ -70,10 +70,6 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	GetPawn()->AddMovementInput(Right,Val.Y);
 }
 
-void AAuraPlayerController::MoveToLocation(const FVector& Location)
-{
-	
-}
 
 void AAuraPlayerController::CursorTrace()
 {
