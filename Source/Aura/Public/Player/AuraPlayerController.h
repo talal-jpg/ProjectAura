@@ -62,6 +62,7 @@ class AURA_API AAuraPlayerController : public APlayerController
 	FVector CachedDestination= FVector::ZeroVector;
 	float HeldTime= 0.f;
 	float ShortPressThreshold= 1.f;
+	float AcceptanceDistance= 110.f;
 
 	
 };

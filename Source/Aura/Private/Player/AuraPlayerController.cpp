@@ -37,12 +37,20 @@ void AAuraPlayerController::Tick(float DeltaTime)
 		if (APawn* ControlledPawn= GetPawn())
 		{
 			FVector MoveDir= (CachedDestination- ControlledPawn->GetActorLocation()).GetSafeNormal();
+			float Dist= (CachedDestination- ControlledPawn->GetActorLocation()).Length();
 			ControlledPawn->AddMovementInput(MoveDir);
+			GEngine->AddOnScreenDebugMessage(-1,10,FColor::Red,FString::Printf(TEXT("Dist %f"),Dist));
+			if (Dist<=AcceptanceDistance)
+			{
+				GEngine->AddOnScreenDebugMessage(5,10,FColor::Black,"AutoRunSetToFalse");
+				bAutoRunning=false;
+			}
 		}
-		
 	}
 	FString Debug_HeldTime= FString::Printf(TEXT("heldTime=%f"),HeldTime);
-	GEngine->AddOnScreenDebugMessage(1,10,FColor::Black,Debug_HeldTime);
+	GEngine->AddOnScreenDebugMessage(2,10,FColor::Black,FString::FromInt(bAutoRunning));
+
+	GEngine->AddOnScreenDebugMessage(1,10,FColor::Black,FString::Printf(TEXT("pat:%f,%f,%f"),CachedDestination.X,CachedDestination.Y,CachedDestination.Z));
 }
 
 UAuraAbilitySystemComponent* AAuraPlayerController::GetAuraAbilitySystemComponent()
@@ -55,7 +63,7 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetAuraAbilitySystemComponen
 }
 
 void AAuraPlayerController::InputPressed(FGameplayTag InputTag)
-{
+{		
 	if (InputTag.MatchesTag(FAuraGameplayTags::Get().Input_LMB))
 	{
 		bTargeting= ThisActor ? true : false;
@@ -88,17 +96,7 @@ void AAuraPlayerController::InputReleased(FGameplayTag InputTag)
 				bAutoRunning=true;
 			}
 		}
-		FHitResult HitResult;
-		GetHitResultUnderCursor(ECC_Visibility,true,HitResult);
-		if (!HitResult.bBlockingHit)return;
-		if (APawn* ControlledPawn= GetPawn())
-		{
-			CachedDestination= HitResult.ImpactPoint;
-			FVector MoveDir= (CachedDestination- ControlledPawn->GetActorLocation()).GetSafeNormal();
-			ControlledPawn->AddMovementInput(MoveDir);
-		}
 	}
-	
 }
 
 void AAuraPlayerController::InputHeld(FGameplayTag InputTag)
@@ -106,6 +104,7 @@ void AAuraPlayerController::InputHeld(FGameplayTag InputTag)
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().Input_LMB))
 	{
 		GetAuraAbilitySystemComponent()->InputTagHeld(InputTag);
+		return;
 	}
 	if (bTargeting)
 	{
@@ -125,7 +124,6 @@ void AAuraPlayerController::InputHeld(FGameplayTag InputTag)
 			ControlledPawn->AddMovementInput(MoveDir);
 		}
 	}
-	
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
