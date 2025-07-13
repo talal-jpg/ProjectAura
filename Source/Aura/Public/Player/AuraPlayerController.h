@@ -7,6 +7,7 @@
 #include "AuraPlayerController.generated.h"
 
 
+class USplineComponent;
 class UAuraAbilitySystemComponent;
 struct FGameplayTag;
 class UAuraInputConfig;
@@ -39,6 +40,9 @@ class AURA_API AAuraPlayerController : public APlayerController
 	void InputPressed(FGameplayTag InputTag);
 	void InputReleased(FGameplayTag InputTag);
 	void InputHeld(FGameplayTag InputTag);
+	
+	UPROPERTY()
+	USplineComponent* Spline;
 
 	void Move(const FInputActionValue& InputActionValue);
 
@@ -52,5 +56,13 @@ class AURA_API AAuraPlayerController : public APlayerController
 
 	UPROPERTY()
 	UAuraAbilitySystemComponent* AuraAbilitySystemComponent;
+
+	bool bTargeting=false;
+	bool bAutoRunning=false;
+	FVector CachedDestination= FVector::ZeroVector;
+	float HeldTime= 0.f;
+	float ShortPressThreshold= 1.f;
+
+	
 };
 
